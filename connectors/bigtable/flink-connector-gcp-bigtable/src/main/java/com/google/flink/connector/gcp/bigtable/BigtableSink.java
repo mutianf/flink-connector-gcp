@@ -62,6 +62,8 @@ public abstract class BigtableSink<T> implements Sink<T> {
 
     public abstract @Nullable Long batchSize();
 
+    public abstract @Nullable Integer closeTimeout();
+
     public static <T> Builder<T> builder() {
         return new AutoValue_BigtableSink.Builder<T>().setFlowControl(false);
     }
@@ -79,10 +81,15 @@ public abstract class BigtableSink<T> implements Sink<T> {
     public SinkWriter<T> createWriter(WriterInitContext sinkInitContext) throws IOException {
         BigtableDataClient client =
                 CreateBigtableClients.createDataClient(
-                        projectId(), instanceId(), flowControl(), appProfileId(), credentials(), batchSize());
+                        projectId(),
+                        instanceId(),
+                        flowControl(),
+                        appProfileId(),
+                        credentials(),
+                        batchSize());
 
         return new BigtableSinkWriter<T>(
-                new BigtableFlushableWriter(client, sinkInitContext, table()),
+                new BigtableFlushableWriter(client, sinkInitContext, table(), closeTimeout()),
                 serializer(),
                 sinkInitContext);
     }
@@ -120,8 +127,11 @@ public abstract class BigtableSink<T> implements Sink<T> {
         /** Google Credentials for Bigtable. Optional. */
         public abstract Builder<T> setCredentials(GoogleCredentials credentials);
 
-        /** The number of elements to group in a batch. **/
+        /** The number of elements to group in a batch. * */
         public abstract Builder<T> setBatchSize(long batchSize);
+
+        /** Timeout when closing the batcher at checkpoints in seconds. */
+        public abstract Builder<T> setCloseTimeout(int closeTimeoutSeconds);
 
         public abstract BigtableSink<T> build();
     }

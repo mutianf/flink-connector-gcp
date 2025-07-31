@@ -66,14 +66,18 @@ public class BigtableFlushableWriter {
     private Counter numOutEntryFailuresCounter;
     private Counter numBatchFailuresCounter;
     private Histogram numEntriesPerFlush;
+    private Integer closeTimeout;
 
     private static final Logger logger = LoggerFactory.getLogger(BigtableFlushableWriter.class);
 
-    private static final Integer BATCHER_CLOSE_TIMEOUT_SECONDS = 60;
+    private static final Integer DEFAULT_BATCHER_CLOSE_TIMEOUT_SECONDS = 60;
     private static final Integer HISTOGRAM_WINDOW_SIZE = 100;
 
     public BigtableFlushableWriter(
-            BigtableDataClient client, WriterInitContext sinkInitContext, String table) {
+            BigtableDataClient client,
+            WriterInitContext sinkInitContext,
+            String table,
+            Integer closeTimeout) {
         checkNotNull(client);
         checkNotNull(sinkInitContext);
         checkNotNull(table);
@@ -81,6 +85,8 @@ public class BigtableFlushableWriter {
         this.client = client;
         this.table = table;
         this.batcher = client.newBulkMutationBatcher(TableId.of(table));
+        this.closeTimeout =
+                closeTimeout != null ? closeTimeout : DEFAULT_BATCHER_CLOSE_TIMEOUT_SECONDS;
 
         // Instantiate Metrics
         this.numRecordsOutCounter =
@@ -110,7 +116,7 @@ public class BigtableFlushableWriter {
     /** Sends mutations to Bigtable. */
     public void flush() throws InterruptedException {
         try {
-            batcher.close(Duration.ofSeconds(BATCHER_CLOSE_TIMEOUT_SECONDS));
+            batcher.close(Duration.ofSeconds(closeTimeout));
             // Update metrics
             this.numEntriesPerFlush.update(totalRecordsBuffer);
             this.numRecordsOutCounter.inc(totalRecordsBuffer);

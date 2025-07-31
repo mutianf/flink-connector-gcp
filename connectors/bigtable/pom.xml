@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.google.flink.connector.gcp</groupId>
     <packaging>pom</packaging>
@@ -10,7 +8,7 @@
     It provides a unified approach for writing data to Google Cloud Bigtable using Apache Flink.</description>
     <url>https://github.com/google/flink-connector-gcp/tree/main/connectors/bigtable</url>
     <artifactId>flink-connector-bigtable-parent</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1-SNAPSHOT</version>
     <modules>
         <module>flink-connector-gcp-bigtable</module>
         <module>flink-examples-gcp-bigtable</module>
@@ -29,14 +27,27 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>artifact-registry</id>
+            <url>artifactregistry://us-maven.pkg.dev/cloud-bigtable-ecosystem/flink-connector</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>artifact-registry</id>
+            <url>artifactregistry://us-maven.pkg.dev/cloud-bigtable-ecosystem/flink-connector</url>
         </repository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>artifact-registry</id>
+            <url>artifactregistry://us-maven.pkg.dev/cloud-bigtable-ecosystem/flink-connector</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <licenses>
         <license>
@@ -345,7 +356,7 @@
                         <importOrder>
                             <order>org.apache.flink,org.apache.flink.shaded,,javax,java,scala,\#</order>
                         </importOrder>
-                        <removeUnusedImports/>
+                        <removeUnusedImports />
                     </java>
                 </configuration>
                 <executions>

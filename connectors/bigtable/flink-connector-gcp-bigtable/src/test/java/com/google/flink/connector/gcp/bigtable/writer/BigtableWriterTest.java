@@ -92,7 +92,8 @@ public class BigtableWriterTest {
         Mockito.when(mockContext.metricGroup())
                 .thenReturn(UnregisteredMetricsGroup.createSinkWriterMetricGroup());
 
-        flushableWriter = new BigtableFlushableWriter(client, mockContext, TestingUtils.TABLE);
+        flushableWriter =
+                new BigtableFlushableWriter(client, mockContext, TestingUtils.TABLE, null);
     }
 
     @After
